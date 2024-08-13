@@ -1,0 +1,4 @@
+include LICENSE
+include python.cpp
+recursive-include kissfft *
+recursive-include tensorflow *
