@@ -1,0 +1,4 @@
+- /.venv/
+- /.mypy_cache/
+- /build/
+- /.pytest_cache/
