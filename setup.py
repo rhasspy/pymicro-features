@@ -1,8 +1,28 @@
+import sys
 from pathlib import Path
 
 # Available at setup time due to pyproject.toml
-from pybind11.setup_helpers import Pybind11Extension, build_ext
+from pybind11.setup_helpers import Pybind11Extension
 from setuptools import setup
+
+
+# Omit `-std=c++` flags if we're building C source files with Clang
+if sys.platform == "darwin":
+    from distutils import unixccompiler
+
+    class PatchedUnixCCompiler(unixccompiler.UnixCCompiler):
+        def _compile(
+            self, obj, src, ext, cc_args, extra_postargs, pp_opts, *args, **kwargs
+        ):
+            if self.compiler[0] == "clang" and ext == ".c":
+                extra_postargs = [a for a in extra_postargs if "-std=c++" not in a]
+
+            return super()._compile(
+                obj, src, ext, cc_args, extra_postargs, pp_opts, *args, **kwargs
+            )
+
+    unixccompiler.UnixCCompiler = PatchedUnixCCompiler
+
 
 _DIR = Path(__file__).parent
 _FRONTEND_DIR = _DIR / "tensorflow" / "lite" / "experimental" / "microfrontend" / "lib"
