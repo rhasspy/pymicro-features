@@ -18,29 +18,30 @@ sources.extend(
         "kiss_fft_int16.cc",
         "fft.cc",
         "fft_util.cc",
-        "filterbank.c",
-        "filterbank_util.c",
-        "frontend.c",
-        "frontend_util.c",
-        "log_lut.c",
-        "log_scale.c",
-        "log_scale_util.c",
-        "noise_reduction.c",
-        "noise_reduction_util.c",
-        "pcan_gain_control.c",
-        "pcan_gain_control_util.c",
-        "window.c",
-        "window_util.c",
+        "filterbank.cc",
+        "filterbank_util.cc",
+        "frontend.cc",
+        "frontend_util.cc",
+        "log_lut.cc",
+        "log_scale.cc",
+        "log_scale_util.cc",
+        "noise_reduction.cc",
+        "noise_reduction_util.cc",
+        "pcan_gain_control.cc",
+        "pcan_gain_control_util.cc",
+        "window.cc",
+        "window_util.cc",
     ]
 )
-sources.append(_KISSFFT_DIR / "kiss_fft.c")
-sources.append(_KISSFFT_DIR / "tools" / "kiss_fftr.c")
+sources.append(_KISSFFT_DIR / "kiss_fft.cc")
+sources.append(_KISSFFT_DIR / "tools" / "kiss_fftr.cc")
 
 flags = ["-DFIXED_POINT=16"]
 ext_modules = [
     Pybind11Extension(
         name="micro_features_cpp",
         language="c++",
+        cxx_std=17,
         extra_compile_args=flags,
         sources=sorted([str(p) for p in sources] + [str(_DIR / "python.cpp")]),
         define_macros=[("VERSION_INFO", __version__)],

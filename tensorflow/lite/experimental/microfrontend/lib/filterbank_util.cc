@@ -66,19 +66,19 @@ int FilterbankPopulateState(const struct FilterbankConfig* config,
            : kFilterbankIndexAlignment / sizeof(int16_t));
 
   state->channel_frequency_starts =
-      malloc(num_channels_plus_1 * sizeof(*state->channel_frequency_starts));
+      (int16_t*)malloc(num_channels_plus_1 * sizeof(*state->channel_frequency_starts));
   state->channel_weight_starts =
-      malloc(num_channels_plus_1 * sizeof(*state->channel_weight_starts));
+      (int16_t*)malloc(num_channels_plus_1 * sizeof(*state->channel_weight_starts));
   state->channel_widths =
-      malloc(num_channels_plus_1 * sizeof(*state->channel_widths));
-  state->work = malloc(num_channels_plus_1 * sizeof(*state->work));
+      (int16_t*)malloc(num_channels_plus_1 * sizeof(*state->channel_widths));
+  state->work = (uint64_t*)malloc(num_channels_plus_1 * sizeof(*state->work));
 
   float* center_mel_freqs =
-      malloc(num_channels_plus_1 * sizeof(*center_mel_freqs));
+      (float*)malloc(num_channels_plus_1 * sizeof(*center_mel_freqs));
   int16_t* actual_channel_starts =
-      malloc(num_channels_plus_1 * sizeof(*actual_channel_starts));
+      (int16_t*)malloc(num_channels_plus_1 * sizeof(*actual_channel_starts));
   int16_t* actual_channel_widths =
-      malloc(num_channels_plus_1 * sizeof(*actual_channel_widths));
+      (int16_t*)malloc(num_channels_plus_1 * sizeof(*actual_channel_widths));
 
   if (state->channel_frequency_starts == NULL ||
       state->channel_weight_starts == NULL || state->channel_widths == NULL ||
@@ -160,8 +160,8 @@ int FilterbankPopulateState(const struct FilterbankConfig* config,
   // Allocate the two arrays to store the weights - weight_index_start contains
   // the index of what would be the next set of weights that we would need to
   // add, so that's how many weights we need to allocate.
-  state->weights = calloc(weight_index_start, sizeof(*state->weights));
-  state->unweights = calloc(weight_index_start, sizeof(*state->unweights));
+  state->weights = (int16_t*)calloc(weight_index_start, sizeof(*state->weights));
+  state->unweights = (int16_t*)calloc(weight_index_start, sizeof(*state->unweights));
 
   // If the alloc failed, we also need to nuke the arrays.
   if (state->weights == NULL || state->unweights == NULL) {
