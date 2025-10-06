@@ -1,3 +1,0 @@
-pytest
-pybind11
-syrupy
