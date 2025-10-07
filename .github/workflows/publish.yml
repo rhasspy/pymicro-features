@@ -69,11 +69,11 @@ jobs:
           CIBW_SKIP: "pp* *-musllinux_*"
 
       - name: Build sdist
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.arch == 'x64' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: python -m build --sdist
 
       - name: Upload wheels and sdist
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.arch == 'x64' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: dist
