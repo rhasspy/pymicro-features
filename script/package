@@ -14,4 +14,4 @@ else:
     python_exe = "python3"
 
 
-subprocess.check_call([python_exe, "-m", "build", "--sdist"])
+subprocess.check_call([python_exe, "-m", "build", "--sdist", "--wheel"])
