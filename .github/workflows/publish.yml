@@ -30,7 +30,7 @@ jobs:
         id: read_ver
         shell: python
         run: |
-          import os, re, pathlib
+          import os, sys, re, pathlib
           text = pathlib.Path("setup.py").read_text()
           m = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", text)
           ver = m.group(1)
@@ -56,7 +56,7 @@ jobs:
           print(f"✅ Version OK: tag={tag} matches setup.py={ver}")
 
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: python -m cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: "cp39-*"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
@@ -68,18 +68,24 @@ jobs:
           # Don't build PyPy and MUSL wheels for now
           CIBW_SKIP: "pp* *-musllinux_*"
 
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*.whl
+          if-no-files-found: error
+
       - name: Build sdist
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: python -m build --sdist
 
-      - name: Upload wheels and sdist
+      - name: Upload sdist
         if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: |
-            wheelhouse/*.whl
-            dist/*.tar.gz
+          path: dist/*.tar.gz
+          if-no-files-found: error
 
   changelog:
     needs: build
