@@ -68,23 +68,17 @@ jobs:
           # Don't build PyPy and MUSL wheels for now
           CIBW_SKIP: "pp* *-musllinux_*"
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/*.whl
-          if-no-files-found: error
-
-      - name: Build sdist
+      - name: Build sdist (once)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: python -m build --sdist
 
-      - name: Upload sdist
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - name: Upload wheels and sdist
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/*.tar.gz
+          name: dist-${{ matrix.os }}
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
           if-no-files-found: error
 
   changelog:
@@ -162,9 +156,11 @@ jobs:
       id-token: write # required for PyPI Trusted Publishing (OIDC)
       contents: read
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download all dists
+        uses: actions/download-artifact@v4
         with:
-          name: dist
+          pattern: dist-*
+          merge-multiple: true
           path: dist
 
       - name: Publish to PyPI via OIDC
