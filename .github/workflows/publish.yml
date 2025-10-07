@@ -22,19 +22,14 @@ jobs:
       - name: Install build tools
         run: pip install build tomli
 
-      - name: Read version from pyproject.toml & verify tag
+      - name: Read version from setup.py & verify tag
         id: read_ver
         shell: python
         run: |
-          import os, sys
-          try:
-              import tomllib as toml   # Python 3.11+
-          except Exception:
-              import tomli as toml     # fallback
-
-          # Read pyproject version
-          with open("pyproject.toml","rb") as f:
-              ver = toml.load(f)["project"]["version"]
+          import os, re, pathlib
+          text = pathlib.Path("setup.py").read_text()
+          m = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", text)
+          ver = m.group(1)
 
           # Extract tag from GITHUB_REF (e.g. "refs/tags/v1.2.3" -> "1.2.3")
           ref = os.environ["GITHUB_REF"]
@@ -46,7 +41,7 @@ jobs:
           tag = ref[len(prefix):]
 
           if tag != ver:
-              print(f"❌ Tag ({tag}) != pyproject.toml ({ver})", file=sys.stderr)
+              print(f"❌ Tag ({tag}) != setup.py ({ver})", file=sys.stderr)
               sys.exit(1)
 
           # Expose outputs
@@ -54,7 +49,7 @@ jobs:
               fh.write(f"tag={tag}\n")
               fh.write(f"file_ver={ver}\n")
 
-          print(f"✅ Version OK: tag={tag} matches pyproject.toml={ver}")
+          print(f"✅ Version OK: tag={tag} matches setup.py={ver}")
 
       - name: Build dists
         run: python -m build

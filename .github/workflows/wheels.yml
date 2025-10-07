@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.23.2
@@ -29,7 +29,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
           CIBW_ARCHS: auto64
-          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_REQUIRES: pytest syrupy
           CIBW_TEST_COMMAND: python -m pytest -vv {project}/tests
 
           # Don't build PyPy and MUSL wheels for now
