@@ -55,7 +55,7 @@ jobs:
         id: read_ver
         shell: python
         run: |
-          import re, pathlib
+          import os, re, pathlib
           text = pathlib.Path("setup.py").read_text()
           m = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", text)
           ver = m.group(1)
