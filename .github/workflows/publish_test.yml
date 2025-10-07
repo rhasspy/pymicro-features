@@ -57,7 +57,7 @@ jobs:
         run: |
           import re, pathlib
           text = pathlib.Path("setup.py").read_text()
-          m = re.search(r"version\s*=\s*["'\'']([^"'\'']+)["'\'']', text)
+          m = re.search(r"version\s*=\s*[\"']([^\"']+)[\"']", text)
           ver = m.group(1)
           with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
               fh.write(f"file_ver={ver}\n")
