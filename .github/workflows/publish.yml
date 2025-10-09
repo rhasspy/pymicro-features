@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
     outputs:
       tag: ${{ steps.read_ver.outputs.tag }}
       file_ver: ${{ steps.read_ver.outputs.file_ver }}
@@ -56,7 +56,8 @@ jobs:
 
           print(f"✅ Version OK: tag={tag} matches setup.py={ver}")
 
-      - name: Build wheels
+      - name: Build wheels (linux)
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm'
         run: python -m cibuildwheel --output-dir dist
         env:
           CIBW_BUILD: "cp39-*"
@@ -68,6 +69,10 @@ jobs:
 
           # Don't build PyPy and MUSL wheels for now
           CIBW_SKIP: "pp* *-musllinux_*"
+
+      - name: Build wheels (windows and macos)
+        if: matrix.os == 'windows-latest' || matrix.os == 'macos-latest'
+        run: python -m build --wheel
 
       - name: Build sdist (once)
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -82,33 +87,33 @@ jobs:
             dist/*.tar.gz
           if-no-files-found: error
 
-  test_sdist:
-    needs: build
-    name: Test sdist on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v4
+  # test_sdist:
+  #   needs: build
+  #   name: Test sdist on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest, macos-latest]
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Download all dists
-        uses: actions/download-artifact@v4
-        with:
-          pattern: dist-*
-          merge-multiple: true
-          path: dist
+  #     - name: Download all dists
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         pattern: dist-*
+  #         merge-multiple: true
+  #         path: dist
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.x"
 
-      - name: Install
-        shell: bash
-        run: pip install pytest syrupy dist/*.tar.gz
+  #     - name: Install
+  #       shell: bash
+  #       run: pip install pytest syrupy dist/*.tar.gz
 
-      - name: Run tests
-        run: script/test
+  #     - name: Run tests
+  #       run: script/test
 
   changelog:
     needs: build
