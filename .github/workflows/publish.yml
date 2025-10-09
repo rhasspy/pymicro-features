@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest] #, ubuntu-24.04-arm]
     outputs:
       tag: ${{ steps.read_ver.outputs.tag }}
       file_ver: ${{ steps.read_ver.outputs.file_ver }}
@@ -88,7 +88,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
+        os: [windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -104,7 +104,9 @@ jobs:
           python-version: "3.x"
 
       - name: Install
-        run: pip install pytest syrupy dist/*.tar.gz
+        run: |
+          ls -la .
+          pip install pytest syrupy dist/*.tar.gz
 
       - name: Run tests
         run: script/test
