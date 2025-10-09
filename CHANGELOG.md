@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Add Windows and macOS wheels
+
 ## 2.0.1
 
 - Add `src` to sdist
