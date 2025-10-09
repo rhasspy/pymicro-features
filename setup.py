@@ -8,7 +8,7 @@ _FRONTEND_DIR = _DIR / "tensorflow" / "lite" / "experimental" / "microfrontend" 
 _KISSFFT_DIR = _DIR / "kissfft"
 _INCLUDE_DIR = _DIR
 
-version = "2.0.1"
+version = "2.0.2"
 
 sources = []
 sources.extend(
