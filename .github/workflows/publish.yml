@@ -104,9 +104,8 @@ jobs:
           python-version: "3.x"
 
       - name: Install
-        run: |
-          ls dist
-          pip install pytest syrupy dist/*.tar.gz
+        shell: bash
+        run: pip install pytest syrupy dist/*.tar.gz
 
       - name: Run tests
         run: script/test
