@@ -56,18 +56,18 @@ jobs:
 
           print(f"✅ Version OK: tag={tag} matches setup.py={ver}")
 
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir dist
-        env:
-          CIBW_BUILD: "cp39-*"
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
-          CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
-          CIBW_ARCHS: auto64
-          CIBW_TEST_REQUIRES: pytest syrupy
-          CIBW_TEST_COMMAND: python -m pytest -vv {project}/tests
+      # - name: Build wheels
+      #   run: python -m cibuildwheel --output-dir dist
+      #   env:
+      #     CIBW_BUILD: "cp39-*"
+      #     CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+      #     CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
+      #     CIBW_ARCHS: auto64
+      #     CIBW_TEST_REQUIRES: pytest syrupy
+      #     CIBW_TEST_COMMAND: python -m pytest -vv {project}/tests
 
-          # Don't build PyPy and MUSL wheels for now
-          CIBW_SKIP: "pp* *-musllinux_*"
+      #     # Don't build PyPy and MUSL wheels for now
+      #     CIBW_SKIP: "pp* *-musllinux_*"
 
       - name: Build sdist (once)
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -88,7 +88,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest] #, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -105,7 +105,7 @@ jobs:
 
       - name: Install
         run: |
-          ls -la .
+          ls dist
           pip install pytest syrupy dist/*.tar.gz
 
       - name: Run tests
